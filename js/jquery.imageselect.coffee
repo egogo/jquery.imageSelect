@@ -9,11 +9,12 @@ $.fn.extend
       dataUrl: null
       data: []
       debug: false
+      perPage: 9
       elemDataAttr: 'img-sel-elem-id'
       containerDataAttr: 'img-sel-cont-id'
       containerTemplate: '<div class="image-selector"></div>'
       previewTemplate: '<div class="image-selector-preview"><img></div>'
-      gridTemplate: '<div class="image-selector-grid"><ul></ul></div>'
+      gridTemplate: '<div class="image-selector-grid"><ul></ul><div class="controls"><a class="l"><</a><a class="r">></a></div></div>'
       gridElTemplate: "<li><img src='{{itm}}'></li>"
 
     # Merge default settings with options.
@@ -25,31 +26,47 @@ $.fn.extend
     
     selectByDataAttr = (key, value) -> $('[data-'+key+'='+value+']')
     
+    fetchDataFromUrl = (idx, el$) ->
+      
+      init(idx,el$)
+      
     
     init = (idx,el$) ->
-      initial_value = el$.val()
+      if settings.data.length > 0
+        initial_value = el$.val()
+        
+        container$ = $(settings.containerTemplate)
+        preview$ = $(settings.previewTemplate)
+        grid$ = $(settings.gridTemplate)
+        
+        container$.append(preview$)
+        container$.append(grid$)
+        container$.insertAfter(el$)
+        
+        setDataAttr(el$, settings.elemDataAttr, idx)
+        setDataAttr(container$, settings.containerDataAttr, idx)
+        
+        preview$.find('img').attr('src', initial_value) if initial_value?
+        
+        grid$.hide()
+        el$.hide()
+        
+        grid$.find('.l').bind 'click', -> prevPage(idx)
+        grid$.find('.r').bind 'click', -> nextPage(idx)
+        
+        preview$.bind 'click', ->
+          render(idx)
+          grid$.show()
+      else
+        fetchDataFromUrl(idx, el$)
+        
+    nextPage = (idx) ->
+      render(idx, 0)
       
-      container$ = $(settings.containerTemplate)
-      preview$ = $(settings.previewTemplate)
-      grid$ = $(settings.gridTemplate)
-      
-      container$.append(preview$)
-      container$.append(grid$)
-      container$.insertAfter(el$)
-      
-      setDataAttr(el$, settings.elemDataAttr, idx)
-      setDataAttr(container$, settings.containerDataAttr, idx)
-      
-      preview$.find('img').attr('src', initial_value) if initial_value?
-      
-      grid$.hide()
-      el$.hide()
-      
-      preview$.bind 'click', ->
-        render(idx)
-        grid$.show()
+    prevPage = (idx) ->
+      render(idx, 1)
     
-    render = (idx) ->
+    render = (idx, page = 0) ->
       container$ = selectByDataAttr(settings.containerDataAttr,idx)
       preview$ = container$.find('.image-selector-preview')
       grid$ = container$.find('.image-selector-grid')
@@ -57,9 +74,9 @@ $.fn.extend
       
       preview_img_src = preview$.find('img').attr('src')
       
-      grid_pos = preview$.position()
-      grid_pos.left += preview$.width()
-      grid$.position(grid_pos)
+      grid$.css('top',preview$.position().top);
+      grid$.css('left', preview$.position().left+preview$.outerWidth()+5)
+      
       grid_ul$.find('li').remove()
       
       settings.data.forEach (itm) ->

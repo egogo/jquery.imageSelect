@@ -6,16 +6,17 @@
 
   $.fn.extend({
     imageSelect: function(options) {
-      var handleImageSelect, init, log, render, selectByDataAttr, setDataAttr, settings;
+      var fetchDataFromUrl, handleImageSelect, init, log, nextPage, prevPage, render, selectByDataAttr, setDataAttr, settings;
       settings = {
         dataUrl: null,
         data: [],
         debug: false,
+        perPage: 9,
         elemDataAttr: 'img-sel-elem-id',
         containerDataAttr: 'img-sel-cont-id',
         containerTemplate: '<div class="image-selector"></div>',
         previewTemplate: '<div class="image-selector-preview"><img></div>',
-        gridTemplate: '<div class="image-selector-grid"><ul></ul></div>',
+        gridTemplate: '<div class="image-selector-grid"><ul></ul><div class="controls"><a class="l"><</a><a class="r">></a></div></div>',
         gridElTemplate: "<li><img src='{{itm}}'></li>"
       };
       settings = $.extend(settings, options);
@@ -30,37 +31,58 @@
       selectByDataAttr = function(key, value) {
         return $('[data-' + key + '=' + value + ']');
       };
+      fetchDataFromUrl = function(idx, el$) {
+        return init(idx, el$);
+      };
       init = function(idx, el$) {
         var container$, grid$, initial_value, preview$;
-        initial_value = el$.val();
-        container$ = $(settings.containerTemplate);
-        preview$ = $(settings.previewTemplate);
-        grid$ = $(settings.gridTemplate);
-        container$.append(preview$);
-        container$.append(grid$);
-        container$.insertAfter(el$);
-        setDataAttr(el$, settings.elemDataAttr, idx);
-        setDataAttr(container$, settings.containerDataAttr, idx);
-        if (initial_value != null) {
-          preview$.find('img').attr('src', initial_value);
+        if (settings.data.length > 0) {
+          initial_value = el$.val();
+          container$ = $(settings.containerTemplate);
+          preview$ = $(settings.previewTemplate);
+          grid$ = $(settings.gridTemplate);
+          container$.append(preview$);
+          container$.append(grid$);
+          container$.insertAfter(el$);
+          setDataAttr(el$, settings.elemDataAttr, idx);
+          setDataAttr(container$, settings.containerDataAttr, idx);
+          if (initial_value != null) {
+            preview$.find('img').attr('src', initial_value);
+          }
+          grid$.hide();
+          el$.hide();
+          grid$.find('.l').bind('click', function() {
+            return prevPage(idx);
+          });
+          grid$.find('.r').bind('click', function() {
+            return nextPage(idx);
+          });
+          return preview$.bind('click', function() {
+            render(idx);
+            return grid$.show();
+          });
+        } else {
+          return fetchDataFromUrl(idx, el$);
         }
-        grid$.hide();
-        el$.hide();
-        return preview$.bind('click', function() {
-          render(idx);
-          return grid$.show();
-        });
       };
-      render = function(idx) {
-        var container$, grid$, grid_pos, grid_ul$, preview$, preview_img_src;
+      nextPage = function(idx) {
+        return render(idx, 0);
+      };
+      prevPage = function(idx) {
+        return render(idx, 1);
+      };
+      render = function(idx, page) {
+        var container$, grid$, grid_ul$, preview$, preview_img_src;
+        if (page == null) {
+          page = 0;
+        }
         container$ = selectByDataAttr(settings.containerDataAttr, idx);
         preview$ = container$.find('.image-selector-preview');
         grid$ = container$.find('.image-selector-grid');
         grid_ul$ = grid$.find('ul');
         preview_img_src = preview$.find('img').attr('src');
-        grid_pos = preview$.position();
-        grid_pos.left += preview$.width();
-        grid$.position(grid_pos);
+        grid$.css('top', preview$.position().top);
+        grid$.css('left', preview$.position().left + preview$.outerWidth() + 5);
         grid_ul$.find('li').remove();
         return settings.data.forEach(function(itm) {
           var el$;

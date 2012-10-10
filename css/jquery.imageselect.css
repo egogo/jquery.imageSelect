@@ -1,0 +1,38 @@
+.image-selector-preview {
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  background-color: #C0C0C0;
+  width: 128px;
+  height: 128px;
+}
+
+.image-selector-preview img {
+  border: none;
+}
+
+.image-selector-grid {
+  position: absolute;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  background-color: #C0C0C0;
+  width:400px;
+  height:400px;
+}
+
+.image-selector-grid ul{
+  width:380px;
+  height:370px;
+  overflow : auto; 
+}
+
+.image-selector-grid li{
+  float:left;
+  display:inline;
+  width: 33.333%;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+}
+
+.image-selector-grid li.selected {
+  background: #f7ffa0;
+}

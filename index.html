@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>CoffeeScript Cookbook &raquo; Create a jQuery Plugin</title>
+    <link rel="stylesheet" href="css/jquery.imageselect.css" type="text/css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+  </head>
+  <body>
+    <input class='image-select' name="avatar" type="text">
+    <input class='image-select' name="avatar2" value="images/feedrss.png" type="text">
+    <script type="text/javascript" src="js/jquery.imageselect.js"></script>
+    <script>
+      $(function(){
+        $('.image-select').imageSelect({debug: true, data: ['images/delicious.png','images/dribbble.png','images/facebook.png',
+                                                            'images/feedrss.png','images/flickr.png','images/forrst.png',
+                                                            'images/foursquare.png','images/gmail.png','images/lastfm.png',
+                                                            'images/skype.png','images/stumbleupon.png','images/twitter.png']});
+      })
+    </script>
+ </body>
+</html>
+
+
+

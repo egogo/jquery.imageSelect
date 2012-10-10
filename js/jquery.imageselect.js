@@ -66,13 +66,19 @@
         }
       };
       nextPage = function(idx) {
-        return render(idx, 0);
+        var container$, page;
+        container$ = selectByDataAttr(settings.containerDataAttr, idx);
+        page = container$.find('.image-selector-grid .controls').data('page') + 1;
+        return render(idx, page);
       };
       prevPage = function(idx) {
-        return render(idx, 1);
+        var container$, page;
+        container$ = selectByDataAttr(settings.containerDataAttr, idx);
+        page = container$.find('.image-selector-grid .controls').data('page') - 1;
+        return render(idx, page);
       };
       render = function(idx, page) {
-        var container$, grid$, grid_ul$, preview$, preview_img_src;
+        var container$, el$, grid$, grid_ul$, i, itm, preview$, preview_img_src, _i, _len, _ref;
         if (page == null) {
           page = 0;
         }
@@ -84,14 +90,19 @@
         grid$.css('top', preview$.position().top);
         grid$.css('left', preview$.position().left + preview$.outerWidth() + 5);
         grid_ul$.find('li').remove();
-        return settings.data.forEach(function(itm) {
-          var el$;
-          el$ = $(settings.gridElTemplate.replace('{{itm}}', itm)).bind('click', handleImageSelect);
-          grid_ul$.append(el$);
-          if ((preview_img_src != null) && preview_img_src === itm) {
-            return el$.addClass('selected');
+        _ref = settings.data;
+        for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+          itm = _ref[i];
+          if (((page + 1) * settings.perPage >= i && i >= page * settings.perPage)) {
+            log(i);
+            el$ = $(settings.gridElTemplate.replace('{{itm}}', itm)).bind('click', handleImageSelect);
+            grid_ul$.append(el$);
+            if ((preview_img_src != null) && preview_img_src === itm) {
+              el$.addClass('selected');
+            }
           }
-        });
+        }
+        return grid$.find('.controls').data('page', page);
       };
       handleImageSelect = function(e) {
         var container$, elem$, id;

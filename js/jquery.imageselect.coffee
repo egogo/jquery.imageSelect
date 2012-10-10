@@ -26,10 +26,7 @@ $.fn.extend
     
     selectByDataAttr = (key, value) -> $('[data-'+key+'='+value+']')
     
-    fetchDataFromUrl = (idx, el$) ->
-      
-      init(idx,el$)
-      
+    fetchDataFromUrl = (idx, el$) -> init(idx,el$)
     
     init = (idx,el$) ->
       if settings.data.length > 0
@@ -61,10 +58,14 @@ $.fn.extend
         fetchDataFromUrl(idx, el$)
         
     nextPage = (idx) ->
-      render(idx, 0)
+      container$ = selectByDataAttr(settings.containerDataAttr,idx)
+      page = container$.find('.image-selector-grid .controls').data('page') + 1
+      render(idx, page)
       
     prevPage = (idx) ->
-      render(idx, 1)
+      container$ = selectByDataAttr(settings.containerDataAttr,idx)
+      page = container$.find('.image-selector-grid .controls').data('page') - 1
+      render(idx, page)
     
     render = (idx, page = 0) ->
       container$ = selectByDataAttr(settings.containerDataAttr,idx)
@@ -79,10 +80,14 @@ $.fn.extend
       
       grid_ul$.find('li').remove()
       
-      settings.data.forEach (itm) ->
-        el$ = $(settings.gridElTemplate.replace('{{itm}}', itm)).bind('click', handleImageSelect)
-        grid_ul$.append(el$)
-        el$.addClass('selected') if preview_img_src? && preview_img_src == itm
+      for itm, i in settings.data
+        if (page+1) * settings.perPage >= i >= page * settings.perPage
+          log i
+          el$ = $(settings.gridElTemplate.replace('{{itm}}', itm)).bind('click', handleImageSelect)
+          grid_ul$.append(el$)
+          el$.addClass('selected') if preview_img_src? && preview_img_src == itm
+        
+      grid$.find('.controls').data('page', page)
         
       
     handleImageSelect = (e) ->

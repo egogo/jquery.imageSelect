@@ -28,7 +28,7 @@
 .image-selector-grid ul{
   width:420px;
   height:390px;
-  overflow : auto; 
+  overflow:hidden;
   padding: 0px;
 }
 

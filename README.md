@@ -1,0 +1,4 @@
+jquery.imageSelect
+==================
+
+jQuery.imageSelector

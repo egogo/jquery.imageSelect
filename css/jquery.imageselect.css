@@ -19,7 +19,7 @@
   -moz-border-radius: 5px;
   background-color: #C0C0C0;
   width:420px;
-  height:420px;
+  height:440px;
   -moz-box-shadow:    3px 3px 3px #ccc;
   -webkit-box-shadow: 3px 3px 3px #ccc;
   box-shadow:         3px 3px 3px #ccc;
@@ -49,9 +49,10 @@
 }
 
 .image-selector-grid .controls {
-  height: 20px;
-  background: #ff6479;
+  position: relative;
+  top: -10px; 
 }
 
-.image-selector-grid .controls .l { float: left; cursor: pointer; }
-.image-selector-grid .controls .r { float: right; cursor: pointer; }
+.image-selector-grid .controls .l { float: left; cursor: pointer; margin: 0 0 0 20px; }
+.image-selector-grid .controls .r { float: right; cursor: pointer; margin: 0 20px 0 0; }
+

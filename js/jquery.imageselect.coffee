@@ -14,7 +14,7 @@ $.fn.extend
       containerDataAttr: 'img-sel-cont-id'
       containerTemplate: '<div class="image-selector"></div>'
       previewTemplate: '<div class="image-selector-preview"><img></div>'
-      gridTemplate: '<div class="image-selector-grid"><ul></ul><div class="controls"><a class="l"><</a><a class="r">></a></div></div>'
+      gridTemplate: '<div class="image-selector-grid"><ul></ul><div class="controls"><a class="l">&larr;</a><a class="r">&rarr;</a></div></div>'
       gridElTemplate: "<li><img src='{{itm}}'></li>"
 
     # Merge default settings with options.

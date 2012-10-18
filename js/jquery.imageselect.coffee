@@ -1,6 +1,9 @@
 # Reference jQuery
 $ = jQuery
 
+# TODO: in msie image is shown as a broken in default state
+# TODO: when there're multiple instances on page - close others on open
+
 # Adds plugin object to jQuery
 $.fn.extend
   imageSelect: (options) ->
@@ -57,17 +60,44 @@ $.fn.extend
       else
         fetchDataFromUrl(idx, el$)
         
-    nextPage = (idx) ->
+    currentPage = (idx) ->
       container$ = selectByDataAttr(settings.containerDataAttr,idx)
-      page = container$.find('.image-selector-grid .controls').data('page') + 1
-      render(idx, page)
+      container$.find('.image-selector-grid .controls').data('page') || 0
+      
+    setCurrentPage = (idx, page) ->
+      container$ = selectByDataAttr(settings.containerDataAttr,idx)
+      setDataAttr(container$.find('.image-selector-grid .controls'), 'data-page', page)
+      
+    totalPages = () ->
+      total = Math.floor(settings.data.length / settings.perPage)
+      total += 1 if settings.data.length % settings.perPage > 0
+      total
+    
+    toggleControlsVisibility = (idx) ->
+      total = totalPages()
+      current = currentPage(idx)
+      container$ = selectByDataAttr(settings.containerDataAttr,idx).find('.image-selector-grid .controls')
+      
+      if current == total-1
+        container$.find('.r').hide()
+      else
+        container$.find('.r').show()
+        
+      if current == 0
+        container$.find('.l').hide()
+      else
+        container$.find('.l').show()
+          
+    nextPage = (idx) ->
+      page = currentPage(idx)
+      render(idx, page+1) if page+1 < totalPages()
       
     prevPage = (idx) ->
-      container$ = selectByDataAttr(settings.containerDataAttr,idx)
-      page = container$.find('.image-selector-grid .controls').data('page') - 1
-      render(idx, page)
+      page = currentPage(idx)
+      render(idx, page-1) if page-1 >= 0
     
     render = (idx, page = 0) ->
+      setCurrentPage(idx, page)
       container$ = selectByDataAttr(settings.containerDataAttr,idx)
       preview$ = container$.find('.image-selector-preview')
       grid$ = container$.find('.image-selector-grid')
@@ -82,12 +112,12 @@ $.fn.extend
       
       for itm, i in settings.data
         if (page+1) * settings.perPage >= i >= page * settings.perPage
-          log i
           el$ = $(settings.gridElTemplate.replace('{{itm}}', itm)).bind('click', handleImageSelect)
           grid_ul$.append(el$)
           el$.addClass('selected') if preview_img_src? && preview_img_src == itm
         
       grid$.find('.controls').data('page', page)
+      toggleControlsVisibility(idx)
         
       
     handleImageSelect = (e) ->

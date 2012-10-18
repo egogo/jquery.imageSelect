@@ -1,3 +1,4 @@
 #!/bin/sh
 
+rm js/*.js
 coffee --watch --compile js/*
